@@ -1,0 +1,4 @@
+.DS_Store
+*.log
+# compiled watcher (built by install.sh, never committed)
+theme-watch
