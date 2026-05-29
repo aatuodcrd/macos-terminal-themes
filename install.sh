@@ -47,7 +47,13 @@ ids() { osascript -e 'tell application "Terminal" to get id of windows' 2>/dev/n
 say "Importing themes into Terminal (this briefly opens a few windows)…"
 expected=0; for _ in "$THEMES_DIR"/*.terminal; do expected=$((expected+1)); done
 before="$(ids)"
-for f in "$THEMES_DIR"/*.terminal; do open "$f"; sleep 0.25; done
+for f in "$THEMES_DIR"/*.terminal; do
+  tname="$(basename "$f" .terminal)"
+  # Replace any existing profile of the same name so re-installs don't duplicate.
+  osascript -e "tell application \"Terminal\" to delete settings set \"$tname\"" 2>/dev/null
+  open "$f"
+  sleep 0.25
+done
 sleep 1.2
 after="$(ids)"
 
