@@ -1,4 +1,4 @@
-# term-tint
+# macos-terminal-themes
 
 **A pack of 20 easy-on-the-eyes themes for macOS Terminal.app that auto-follows
 your system appearance — and gives every new window a different color so you can
