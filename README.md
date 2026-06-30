@@ -67,14 +67,19 @@ The installer:
 
 ### Window notes
 
-`note "text"` marks what a window is for — it reserves the top rows and paints a
-big dim banner there that stays put while you work, so you can tell windows apart
-at a glance. It's per-window (each tab keeps its own), and also sets the tab title.
+`note "text"` marks what a window is for, so you can tell windows apart at a
+glance. It's per-window/pane (each keeps its own) and also sets the tab title.
+Clear with a bare `note`.
 
-Big letters use [`figlet`](https://formulae.brew.sh/formula/figlet)
-(`brew install figlet`); without it you still get a dim caps banner. Clear with a
-bare `note`. (Terminal.app has no true behind-the-text layer, so this is a pinned
-top region rather than an alpha watermark — `note` always resets it cleanly.)
+- **iTerm2** — uses the native [badge](https://iterm2.com/documentation-badges.html):
+  real text on the **background layer**, behind your shell text, faint and big.
+  This is the good path; resize the badge under *Settings → Profiles → General →
+  Badge*.
+- **Apple Terminal** — has no behind-the-text layer (no live background-image API,
+  ignores DEC double-size), so it falls back to a big dim banner pinned in a
+  reserved top region, redrawn each prompt. Big letters use
+  [`figlet`](https://formulae.brew.sh/formula/figlet) (`brew install figlet`);
+  without it you get a dim caps banner. `note` always resets it cleanly.
 
 ## Customize
 

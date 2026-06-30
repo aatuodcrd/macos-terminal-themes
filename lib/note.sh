@@ -1,23 +1,27 @@
 #!/bin/zsh
 # term-tint: per-window background note (watermark).
 #
-#   note "fixing auth bug"   # pin a big faint watermark at the top of THIS window
+#   note "fixing auth bug"   # label THIS window/pane with a big faint watermark
 #   note                     # clear it
 #
-# Terminal.app can't paint text *behind* the cursor layer — it has no live
-# background-image AppleScript property and ignores DEC double-size lines. So the
-# closest real "watermark" is: reserve the top rows with a scroll region and
-# redraw a big, dim banner there on every prompt. State is a plain shell var, so
-# it's naturally per-tab/window. Big letters need `figlet` (brew install figlet);
-# without it you still get a dim caps banner.
+# iTerm2: uses the native badge — real text on the background layer, behind your
+# shell text, per-pane, set with one escape. This is the good path.
 #
-# Only ever touches the screen on an interactive TTY — sourced/called from a
-# non-interactive shell it just records the text, so it can't corrupt scripts.
-# ponytail: scroll-region banner, fragile across resize mid-command — `note`
-# (bare) is the escape hatch and always resets the region cleanly.
+# Apple Terminal: has no live background-image API and ignores DEC double-size, so
+# a true behind-the-text layer is impossible. Falls back to a big dim banner pinned
+# in a reserved top scroll region, redrawn each prompt. Big letters need `figlet`.
+#
+# State is a plain shell var, so it's per-tab/window. Only ever touches the screen
+# on an interactive TTY; in a non-interactive shell it just records the text.
 
 typeset -g _TT_NOTE=""
+typeset -g _TT_ITERM=0
+[[ "${TERM_PROGRAM:-}" == "iTerm.app" || "${LC_TERMINAL:-}" == "iTerm2" ]] && _TT_ITERM=1
 
+# ---- iTerm2 badge (true background watermark) --------------------------------
+_tt_badge() { printf '\033]1337;SetBadgeFormat=%s\a' "$(print -rn -- "$1" | base64 | tr -d '\n')"; }
+
+# ---- Apple Terminal pinned banner -------------------------------------------
 _tt_note_lines() {                       # render $_TT_NOTE -> banner lines on stdout
   if command -v figlet >/dev/null 2>&1; then
     figlet -w "${COLUMNS:-80}" -- "$_TT_NOTE" 2>/dev/null
@@ -37,7 +41,8 @@ _tt_note_geom() {                        # -> "$h $rows $cols", robust against a
   print -r -- "$h $r $c"
 }
 
-_tt_note_draw() {                        # redraw the frozen banner (called each precmd)
+_tt_note_draw() {                        # redraw the frozen banner (Apple Terminal, each precmd)
+  (( _TT_ITERM )) && return             # iTerm2 badge persists itself — nothing to redraw
   [[ -n "$_TT_NOTE" && -o interactive && -t 1 ]] || return
   local h r c; read h r c <<<"$(_tt_note_geom)"
   (( h < 1 )) && return
@@ -56,13 +61,22 @@ note() {
   case "${1:-}" in
     ""|off|clear|-c)
       _TT_NOTE=""
-      [[ -t 1 ]] && printf '\033[r\033]1;\007'      # release scroll region + clear tab title (no screen wipe)
+      [[ -t 1 ]] || return
+      if (( _TT_ITERM )); then
+        _tt_badge ""                                # empty badge = cleared
+      else
+        printf '\033[r' ; printf '\033]1;\007'      # release scroll region + clear tab title
+      fi
       return ;;
     *)
       _TT_NOTE="$*"
       [[ -t 1 ]] || return                          # not a terminal: just record the text
-      printf '\033]1;%s\007' "$_TT_NOTE"            # label the tab
-      [[ -o interactive ]] || return                # non-interactive: don't touch the screen
+      printf '\033]1;%s\007' "$_TT_NOTE"            # label the tab title (both terminals)
+      if (( _TT_ITERM )); then
+        _tt_badge "$_TT_NOTE"                        # real background watermark, done
+        return
+      fi
+      [[ -o interactive ]] || return                # Apple Terminal banner: needs an interactive screen
       local h r c; read h r c <<<"$(_tt_note_geom)"
       (( h < 1 )) && return
       printf '\033[%d;%dr\033[H\033[2J' $((h+1)) "$r"   # reserve banner rows + clean slate
@@ -71,7 +85,7 @@ note() {
   esac
 }
 
-# Keep it pinned: redraw before every prompt (re-establishes the region + banner
-# after a clear, a full-screen app, or a resize). Cheap no-op when no note is set.
+# Apple Terminal only: redraw before every prompt so the banner survives a clear,
+# a full-screen app, or a resize. No-op in iTerm2 and when no note is set.
 autoload -Uz add-zsh-hook 2>/dev/null
 if add-zsh-hook precmd _tt_note_draw 2>/dev/null; then :; else precmd_functions+=(_tt_note_draw); fi
