@@ -15,12 +15,16 @@ func color(_ hex: String) -> NSColor {
 func lin(_ c: CGFloat) -> CGFloat { c <= 0.03928 ? c/12.92 : pow((c+0.055)/1.055, 2.4) }
 func luminance(_ col: NSColor) -> CGFloat { let c = col.usingColorSpace(.sRGB)!; return 0.2126*lin(c.redComponent)+0.7152*lin(c.greenComponent)+0.0722*lin(c.blueComponent) }
 func contrast(_ a: NSColor, _ b: NSColor) -> CGFloat { let la=luminance(a), lb=luminance(b); return (max(la,lb)+0.05)/(min(la,lb)+0.05) }
-func fixContrast(_ col: NSColor, on bg: NSColor, target: CGFloat) -> NSColor {
+// Nudge `col` until it clears `target` contrast on `bg`. Direction is set by the
+// THEME (toBlack = light theme), never guessed from bg luminance: a mid-tone light
+// background (e.g. Stone, lum 0.37) must still darken its accents toward black, not
+// lighten toward white — lightening there can never reach target and saturates to
+// pure white (the old `luminance(bg) > 0.5` bug that blanked whole palettes).
+func fixContrast(_ col: NSColor, on bg: NSColor, target: CGFloat, toBlack: Bool) -> NSColor {
     let c = col.usingColorSpace(.sRGB)!
     if contrast(c, bg) >= target { return c }
-    let bgLight = luminance(bg) > 0.5
     func at(_ t: CGFloat) -> NSColor {
-        bgLight ? NSColor(srgbRed: c.redComponent*(1-t), green: c.greenComponent*(1-t), blue: c.blueComponent*(1-t), alpha: 1)
+        toBlack ? NSColor(srgbRed: c.redComponent*(1-t), green: c.greenComponent*(1-t), blue: c.blueComponent*(1-t), alpha: 1)
                 : NSColor(srgbRed: c.redComponent+(1-c.redComponent)*t, green: c.greenComponent+(1-c.greenComponent)*t, blue: c.blueComponent+(1-c.blueComponent)*t, alpha: 1)
     }
     var lo: CGFloat = 0, hi: CGFloat = 1
@@ -64,15 +68,29 @@ let colorKeys = ["BackgroundColor","TextColor","TextBoldColor","CursorColor","Se
 let outDir = FileManager.default.currentDirectoryPath + "/themes"
 try? FileManager.default.createDirectory(atPath: outDir, withIntermediateDirectories: true)
 
+// Ctrl+Delete word-erase, matching the Option-as-Meta word motions. Terminal.app
+// keyMapBoundKeys: `^` = control; \u{7f} = Delete (Backspace), \u{f728} = ⌦ forward.
+// Values are the bytes sent to the shell — ESC+DEL and ESC-d are readline's
+// backward/forward kill-word.
+let keyBindings: [String: String] = [
+    "^\u{7f}":   "\u{1b}\u{7f}",   // Ctrl+Delete (Backspace) → delete word to the left
+    "^\u{f728}": "\u{1b}d",        // Ctrl+Forward-Delete (⌦)  → delete word to the right
+]
+
 func build(_ name: String, _ bgHex: String, _ fgHex: String, isDark: Bool) {
     let bg = color(bgHex)
-    let fg = fixContrast(color(fgHex), on: bg, target: 5.0)
-    let ansi = (isDark ? darkANSI : lightANSI).map { fixContrast(color($0), on: bg, target: 3.0) }
+    let toBlack = !isDark                                 // light themes darken text/accents, dark themes lighten
+    let fg = fixContrast(color(fgHex), on: bg, target: 5.0, toBlack: toBlack)
+    let ansiTarget: CGFloat = isDark ? 3.0 : 4.5         // accents: ≥3:1 on dark, ≥4.5:1 on light (pale colors need more on light bg)
+    let ansi = (isDark ? darkANSI : lightANSI).map { fixContrast(color($0), on: bg, target: ansiTarget, toBlack: toBlack) }
     let selection = isDark ? color("3a4150") : color("c8cdd6")
-    var d: [String: Any] = ["name": name, "type": "Window Settings", "ProfileCurrentVersion": "2.09", "FontAntialias": true]
+    var d: [String: Any] = ["name": name, "type": "Window Settings", "ProfileCurrentVersion": "2.09",
+                            "FontAntialias": true, "useOptionAsMetaKey": true, "keyMapBoundKeys": keyBindings]
     let colors = [bg, fg, fg, fg, selection] + ansi      // bg, text, bold, cursor, selection, ANSI...
     for (k, c) in zip(colorKeys, colors) { d[k] = colorData(c) }
-    let data = try! PropertyListSerialization.data(fromPropertyList: d, format: .xml, options: 0)
+    // Binary, not XML: keyMapBoundKeys values carry raw control bytes (ESC 0x1b, DEL
+    // 0x7f) that are illegal in XML 1.0. Binary is also Terminal.app's own native format.
+    let data = try! PropertyListSerialization.data(fromPropertyList: d, format: .binary, options: 0)
     try! data.write(to: URL(fileURLWithPath: "\(outDir)/\(name).terminal"))
     print("  \(isDark ? "dark " : "light")\(name)")
 }
