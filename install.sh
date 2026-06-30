@@ -79,8 +79,15 @@ if [ -d "/Applications/iTerm.app" ] && [ -f "$SCRIPT_DIR/iterm2/term-tint.json" 
   IDP="$HOME/Library/Application Support/iTerm2/DynamicProfiles"
   mkdir -p "$IDP"
   cp "$SCRIPT_DIR/iterm2/term-tint.json" "$IDP/term-tint.json"
-  say "iTerm2 found: installed 20 'term-tint <name>' profiles with the watermark badge."
-  echo "      Pick one in iTerm2 → Profiles; 'note \"text\"' shows a real background badge."
+  # Compile the centered-watermark renderer used by `note` on iTerm2.
+  if command -v swiftc >/dev/null 2>&1; then
+    swiftc -O "$SCRIPT_DIR/tools/note-bg.swift" -o "$INSTALL_DIR/note-bg" 2>/dev/null \
+      && say "iTerm2: installed 20 'term-tint <name>' profiles + centered 'note' watermark." \
+      || warn "iTerm2 profiles installed, but note-bg failed to build (note falls back to a top-right badge)."
+  else
+    say "iTerm2: installed 20 'term-tint <name>' profiles (note uses a top-right badge without swiftc)."
+  fi
+  echo "      Pick a 'term-tint' profile in iTerm2; 'note \"text\"' paints a centered background watermark."
 fi
 
 # --- realtime watcher ---------------------------------------------------------

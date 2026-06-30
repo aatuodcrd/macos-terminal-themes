@@ -71,10 +71,11 @@ The installer:
 glance. It's per-window/pane (each keeps its own) and also sets the tab title.
 Clear with a bare `note`.
 
-- **iTerm2** — uses the native [badge](https://iterm2.com/documentation-badges.html):
-  real text on the **background layer**, behind your shell text, faint and big.
-  This is the good path; resize the badge under *Settings → Profiles → General →
-  Badge*.
+- **iTerm2** — paints a **centered** watermark on the background layer (behind your
+  shell text) via `SetBackgroundImageFile`: a big faint render of your text, dead
+  centre, per-pane, changed/cleared instantly. iTerm2 asks once to allow setting a
+  background image — say yes. (Without the compiled `note-bg` renderer it falls back
+  to a top-right badge.) Tune faintness with `TT_NOTE_ALPHA` / `TT_NOTE_GRAY`.
 - **Apple Terminal** — has no behind-the-text layer (no live background-image API,
   ignores DEC double-size), so it falls back to a big dim banner pinned in a
   reserved top region, redrawn each prompt. Big letters use

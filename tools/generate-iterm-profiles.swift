@@ -21,7 +21,11 @@ func comps(_ c: NSColor) -> [String: Any] {
             "Alpha Component": 1.0]
 }
 
+// `note` paints a centered watermark via SetBackgroundImageFile; AspectFit keeps
+// it centred and never cropped. Badge keys are kept as the fallback look when the
+// note-bg renderer isn't compiled.
 let badge: [String: Any] = [
+    "Background Image Mode": 2,            // 0=stretch 1=tile 2=aspect-fit 3=aspect-fill
     "Badge Color": ["Color Space": "sRGB", "Red Component": 0.62, "Green Component": 0.62,
                     "Blue Component": 0.66, "Alpha Component": 0.22],
     "Badge Max Width": 0.9, "Badge Max Height": 0.5,

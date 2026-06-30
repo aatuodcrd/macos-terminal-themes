@@ -120,6 +120,7 @@
         "Green Component" : 0.2274509804,
         "Red Component" : 0.41568627450000001
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -297,6 +298,7 @@
         "Green Component" : 0.74117647060000003,
         "Red Component" : 0.96078431369999995
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -474,6 +476,7 @@
         "Green Component" : 0.15686274510000001,
         "Red Component" : 0.21960784310000001
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -651,6 +654,7 @@
         "Green Component" : 0.92549019610000005,
         "Red Component" : 0.96862745100000003
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -828,6 +832,7 @@
         "Green Component" : 0.15686274510000001,
         "Red Component" : 0.031372549020000001
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -1005,6 +1010,7 @@
         "Green Component" : 0.79607843140000001,
         "Red Component" : 0.92549019610000005
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -1182,6 +1188,7 @@
         "Green Component" : 0.062745098040000002,
         "Red Component" : 0.15686274510000001
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -1359,6 +1366,7 @@
         "Green Component" : 0,
         "Red Component" : 0
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -1536,6 +1544,7 @@
         "Green Component" : 0.65098039220000004,
         "Red Component" : 0.79215686269999996
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -1713,6 +1722,7 @@
         "Green Component" : 0.090196078430000007,
         "Red Component" : 0.45098039220000002
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -1890,6 +1900,7 @@
         "Green Component" : 0.6705882353,
         "Red Component" : 0.92941176469999998
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -2067,6 +2078,7 @@
         "Green Component" : 0.99607843139999996,
         "Red Component" : 0.99607843139999996
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -2244,6 +2256,7 @@
         "Green Component" : 0.69803921570000005,
         "Red Component" : 0.66666666669999997
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -2421,6 +2434,7 @@
         "Green Component" : 0.062745098040000002,
         "Red Component" : 0.25098039220000001
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -2598,6 +2612,7 @@
         "Green Component" : 0.81176470590000005,
         "Red Component" : 0.81176470590000005
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -2775,6 +2790,7 @@
         "Green Component" : 0.80784313730000001,
         "Red Component" : 0.61176470589999998
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -2952,6 +2968,7 @@
         "Green Component" : 0.33725490200000002,
         "Red Component" : 0.1960784314
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -3129,6 +3146,7 @@
         "Green Component" : 0.30196078430000001,
         "Red Component" : 0.2784313725
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -3306,6 +3324,7 @@
         "Green Component" : 0.64313725489999995,
         "Red Component" : 0.62352941179999999
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,
@@ -3483,6 +3502,7 @@
         "Green Component" : 0.1215686275,
         "Red Component" : 0.33333333329999998
       },
+      "Background Image Mode" : 2,
       "Badge Color" : {
         "Alpha Component" : 0.22,
         "Blue Component" : 0.66000000000000003,

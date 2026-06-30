@@ -15,11 +15,31 @@
 # on an interactive TTY; in a non-interactive shell it just records the text.
 
 typeset -g _TT_NOTE=""
+typeset -g _TT_NOTE_PNG=""
 typeset -g _TT_ITERM=0
 [[ "${TERM_PROGRAM:-}" == "iTerm.app" || "${LC_TERMINAL:-}" == "iTerm2" ]] && _TT_ITERM=1
+: ${TERM_TINT_DIR:=$HOME/.config/terminal-theme}
 
-# ---- iTerm2 badge (true background watermark) --------------------------------
+# ---- iTerm2 background watermark --------------------------------------------
+# Centered image via SetBackgroundImageFile when the note-bg renderer is built;
+# otherwise a top-right badge. Both are real background layers, behind the text.
 _tt_badge() { printf '\033]1337;SetBadgeFormat=%s\a' "$(print -rn -- "$1" | base64 | tr -d '\n')"; }
+_tt_bgimage() { printf '\033]1337;SetBackgroundImageFile=%s\a' "$(print -rn -- "$1" | base64 | tr -d '\n')"; }
+
+_tt_iterm_set() {                        # $1 = note text
+  local gen="$TERM_TINT_DIR/note-bg" png="${TMPDIR:-/tmp}/tt-note-$$-$RANDOM.png"
+  if [[ -x "$gen" ]] && "$gen" "$1" "$png" 2>/dev/null; then
+    [[ -n "$_TT_NOTE_PNG" ]] && rm -f "$_TT_NOTE_PNG"
+    _TT_NOTE_PNG="$png"
+    _tt_bgimage "$png"                   # centered watermark on the background
+  else
+    _tt_badge "$1"                       # fallback: top-right badge
+  fi
+}
+_tt_iterm_clear() {
+  _tt_bgimage ""; _tt_badge ""
+  [[ -n "$_TT_NOTE_PNG" ]] && rm -f "$_TT_NOTE_PNG"; _TT_NOTE_PNG=""
+}
 
 # ---- Apple Terminal pinned banner -------------------------------------------
 _tt_note_lines() {                       # render $_TT_NOTE -> banner lines on stdout
@@ -63,7 +83,7 @@ note() {
       _TT_NOTE=""
       [[ -t 1 ]] || return
       if (( _TT_ITERM )); then
-        _tt_badge ""                                # empty badge = cleared
+        _tt_iterm_clear                             # remove bg image + badge
       else
         printf '\033[r' ; printf '\033]1;\007'      # release scroll region + clear tab title
       fi
@@ -73,7 +93,7 @@ note() {
       [[ -t 1 ]] || return                          # not a terminal: just record the text
       printf '\033]1;%s\007' "$_TT_NOTE"            # label the tab title (both terminals)
       if (( _TT_ITERM )); then
-        _tt_badge "$_TT_NOTE"                        # real background watermark, done
+        _tt_iterm_set "$_TT_NOTE"                    # centered background watermark
         return
       fi
       [[ -o interactive ]] || return                # Apple Terminal banner: needs an interactive screen
