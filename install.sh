@@ -74,6 +74,15 @@ else
   fi
 fi
 
+# --- iTerm2 (optional): themed profiles + watermark badge --------------------
+if [ -d "/Applications/iTerm.app" ] && [ -f "$SCRIPT_DIR/iterm2/term-tint.json" ]; then
+  IDP="$HOME/Library/Application Support/iTerm2/DynamicProfiles"
+  mkdir -p "$IDP"
+  cp "$SCRIPT_DIR/iterm2/term-tint.json" "$IDP/term-tint.json"
+  say "iTerm2 found: installed 20 'term-tint <name>' profiles with the watermark badge."
+  echo "      Pick one in iTerm2 → Profiles; 'note \"text\"' shows a real background badge."
+fi
+
 # --- realtime watcher ---------------------------------------------------------
 if command -v swiftc >/dev/null 2>&1; then
   say "Compiling event-driven watcher (Swift) — ~0% CPU when idle."

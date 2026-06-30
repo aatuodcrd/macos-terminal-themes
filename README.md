@@ -106,9 +106,14 @@ The themes are produced by `tools/generate-themes.swift` (colors + automatic
 contrast fixing live there). Edit the palette and run:
 
 ```sh
-swift tools/generate-themes.swift   # rewrites themes/*.terminal
-./install.sh                        # re-imports them
+swift tools/generate-themes.swift          # rewrites themes/*.terminal
+swift tools/generate-iterm-profiles.swift  # rewrites iterm2/term-tint.json (iTerm2)
+./install.sh                               # re-imports them (Terminal + iTerm2 if present)
 ```
+
+If iTerm2 is installed, `install.sh` also drops 20 matching `term-tint <name>`
+profiles into iTerm2's Dynamic Profiles (each with the watermark badge enabled),
+so `note` gives a real background watermark there.
 
 ## How it works
 
