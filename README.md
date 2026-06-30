@@ -62,6 +62,19 @@ The installer:
 | `tint dark` / `tint light` | Force the current window to a random dark/light theme |
 | `tint all` | Re-randomize every open window now |
 | `tint` | Re-randomize just the current window |
+| `note "deploying prod"` | Pin a big, faint watermark at the top of **this** window |
+| `note` | Clear the watermark |
+
+### Window notes
+
+`note "text"` marks what a window is for — it reserves the top rows and paints a
+big dim banner there that stays put while you work, so you can tell windows apart
+at a glance. It's per-window (each tab keeps its own), and also sets the tab title.
+
+Big letters use [`figlet`](https://formulae.brew.sh/formula/figlet)
+(`brew install figlet`); without it you still get a dim caps banner. Clear with a
+bare `note`. (Terminal.app has no true behind-the-text layer, so this is a pinned
+top region rather than an alpha watermark — `note` always resets it cleanly.)
 
 ## Customize
 

@@ -29,6 +29,7 @@ mkdir -p "$INSTALL_DIR" "$HOME/Library/LaunchAgents"
 
 # --- copy runtime files -------------------------------------------------------
 cp "$SCRIPT_DIR/lib/apply-theme.sh"      "$INSTALL_DIR/apply-theme.sh"
+cp "$SCRIPT_DIR/lib/note.sh"             "$INSTALL_DIR/note.sh"
 cp "$SCRIPT_DIR/lib/demo-card.sh"        "$INSTALL_DIR/demo-card.sh"
 cp "$SCRIPT_DIR/lib/theme-watch.swift"   "$INSTALL_DIR/theme-watch.swift"
 cp "$SCRIPT_DIR/lib/theme-watch-poll.sh" "$INSTALL_DIR/theme-watch-poll.sh"
@@ -143,6 +144,8 @@ tint() {
     *)     "\$TERM_TINT_DIR/apply-theme.sh" window ;;
   esac
 }
+# Per-window watermark note:  note "what I'm doing"  |  note   (to clear)
+[ -n "\${ZSH_VERSION:-}" ] && source "\$TERM_TINT_DIR/note.sh"
 $HOOK_END
 EOF
 
@@ -152,6 +155,8 @@ echo "  • Open a NEW Terminal window  → it gets a random theme."
 echo "  • Toggle macOS Light/Dark     → all windows switch instantly."
 echo "  • Try:  tint demo   (opens all 20 side by side)"
 echo "          tint dark | tint light | tint all"
+echo "  • Note a window: note \"deploying prod\"   (clear with: note)"
+command -v figlet >/dev/null 2>&1 || echo "          └─ big watermark letters need figlet:  brew install figlet"
 echo "  • Edit your pool:  $INSTALL_DIR/profiles.conf"
 echo
 echo "  Run 'source ~/.zshrc' in this window, or just open a new one."
